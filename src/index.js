@@ -15,6 +15,7 @@ module.exports = class SentryPlugin {
     this.apiKey = options.apiKey
 
     this.releaseVersion = options.release
+    this.body = options.body || {}
 
     this.include = options.include || DEFAULT_INCLUDE
     this.exclude = options.exclude
@@ -111,7 +112,7 @@ module.exports = class SentryPlugin {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ version: this.releaseVersion }),
+      body: JSON.stringify(Object.assign(this.body, { version: this.releaseVersion })),
     })
   }
 

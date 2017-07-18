@@ -39,10 +39,17 @@ $ yarn add webpack-sentry-plugin --dev
          organisation: 'your-organisation-name',
          project: 'your-project-name',
          apiKey: process.env.SENTRY_API_KEY,
-         
+
          // Release version name/hash is required
          release: function() {
            return process.env.GIT_SHA
+         },
+         // custom options, like refs to send to sentry
+         body: {
+           refs: [{
+             repository: 'project-repo',
+             commit: process.env.GIT_SHA
+           }]
          }
        })
      ]
@@ -56,6 +63,8 @@ $ yarn add webpack-sentry-plugin --dev
 - `project`: **Required**, Sentry project to upload files to
 
 - `apiKey`: **Required**, Sentry api key ([Generate one here](https://sentry.io/api/), ensure that `project:write`, `project:read` and `project:releases` are selected ,under scopes)
+
+- `body`: custom body attributes to send to sentry. See https://docs.sentry.io/learn/releases for details.
 
 - `release`: **Required**, string or function that returns the release name. See [What is a release?](#what-is-a-release) below for details
 
@@ -109,7 +118,7 @@ $ yarn add webpack-sentry-plugin --dev
 
 ### What is a `release`?
 
-A release is a concept that Sentry uses to attach source maps to a known version of your code. The plugin creates one for you, but you need to provide a "name" for a particular version of your code, which is just a string. Sentry can then use the release to say that a it found an error in this known version of your code. 
+A release is a concept that Sentry uses to attach source maps to a known version of your code. The plugin creates one for you, but you need to provide a "name" for a particular version of your code, which is just a string. Sentry can then use the release to say that a it found an error in this known version of your code.
 
 Passing the string to the plugin really depends on your setup. There are three main approaches:
 
@@ -119,7 +128,7 @@ A git commit hash is very useful for releases - it is a string that defines a pa
 new SentryPlugin({
   // ...
   release: function() {
-    // Note: this is just an example, it depends on your deployment pipeline 
+    // Note: this is just an example, it depends on your deployment pipeline
     return process.env.SOURCE_VERSION;
   }
 });
